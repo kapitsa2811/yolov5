@@ -90,9 +90,9 @@ class Model(nn.Module):
         # Build strides, anchors
         m = self.model[-1]  # Detect() # &&&& stripped last layer, what is Detect???? its class defined above
         if isinstance(m, Detect):
-            s = 256  # 2x min stride
-            m.stride = torch.tensor([s / x.shape[-2] for x in self.forward(torch.zeros(1, ch, s, s))])  # forward
-            m.anchors /= m.stride.view(-1, 1, 1)
+            s = 256  # 2x min stride  &&&& what is x below and size 
+            m.stride = torch.tensor([s / x.shape[-2] for x in self.forward(torch.zeros(1, ch, s, s))])  # forward &&&&  m.stride = tensor([ 8., 16., 32.])
+            m.anchors /= m.stride.view(-1, 1, 1) 
             check_anchor_order(m)
             self.stride = m.stride
             self._initialize_biases()  # only run once
