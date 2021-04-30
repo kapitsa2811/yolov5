@@ -88,7 +88,7 @@ class Model(nn.Module):
         # logger.info([x.shape for x in self.forward(torch.zeros(1, ch, 64, 64))])
 
         # Build strides, anchors
-        m = self.model[-1]  # Detect() # &&&& stripped last layer, what is Detect????
+        m = self.model[-1]  # Detect() # &&&& stripped last layer, what is Detect???? its class defined above
         if isinstance(m, Detect):
             s = 256  # 2x min stride
             m.stride = torch.tensor([s / x.shape[-2] for x in self.forward(torch.zeros(1, ch, s, s))])  # forward
