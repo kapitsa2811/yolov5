@@ -103,11 +103,11 @@ class Model(nn.Module):
         self.info()
         logger.info('')
 
-    def forward(self, x, augment=False, profile=False):
-        if augment: # &&&  input x: torch.Size([1, 3, 256, 256])
+    def forward(self, x, augment=False, profile=False): #input x: torch.Size([1, 3, 256, 256]) 
+        if augment: # &&&  could not run this part
             img_size = x.shape[-2:]  # height, width
-            s = [1, 0.83, 0.67]  # scales
-            f = [None, 3, None]  # flips (2-ud, 3-lr)
+            s = [1, 0.83, 0.67]  # scales  # why here scales are used and what will happen if it is changed &&&&
+            f = [None, 3, None]  # flips (2-ud, 3-lr) # &&&& what is f?
             y = []  # outputs
             for si, fi in zip(s, f):
                 xi = scale_img(x.flip(fi) if fi else x, si, gs=int(self.stride.max()))
@@ -138,8 +138,8 @@ class Model(nn.Module):
                 if m == self.model[0]:
                     logger.info(f"{'time (ms)':>10s} {'GFLOPS':>10s} {'params':>10s}  {'module'}")
                 logger.info(f'{dt[-1]:10.2f} {o:10.2f} {m.np:10.0f}  {m.type}')
-
-            x = m(x)  # run
+            #  input x shape:                                               shape: torch.Size([1, 3, 256, 256])
+            x = m(x)  # run output x shape: 2.x: <class 'torch.Tensor'>     shape: torch.Size([1, 32, 128, 128])
             y.append(x if m.i in self.save else None)  # save output
 
         if profile:
