@@ -83,16 +83,16 @@ class Model(nn.Module):
         if anchors:
             logger.info(f'Overriding model.yaml anchors with anchors={anchors}')
             self.yaml['anchors'] = round(anchors)  # override yaml value
-        self.model, self.save = parse_model(deepcopy(self.yaml), ch=[ch])  # model, savelist
+        self.model, self.save = parse_model(deepcopy(self.yaml), ch=[ch])  # model, savelist &&& here it loads model
         self.names = [str(i) for i in range(self.yaml['nc'])]  # default names
         # logger.info([x.shape for x in self.forward(torch.zeros(1, ch, 64, 64))])
 
         # Build strides, anchors
         m = self.model[-1]  # Detect() # &&&& stripped last layer, what is Detect???? its class defined above
         if isinstance(m, Detect):
-            s = 256  # 2x min stride  &&&& what is x below and size  
+            s = 256  # 2x min stride  &&&& what is x below and size , what is stride https://discuss.pytorch.org/t/pytorch-tensor-stride-how-it-works/90537 
             m.stride = torch.tensor([s / x.shape[-2] for x in self.forward(torch.zeros(1, ch, s, s))])  # forward &&&&  m.stride = tensor([ 8., 16., 32.])
-            m.anchors /= m.stride.view(-1, 1, 1) 
+            m.anchors /= m.stride.view(-1, 1, 1)  # &&& this perform division and scale down of anchor sizes
             check_anchor_order(m)
             self.stride = m.stride
             self._initialize_biases()  # only run once
