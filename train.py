@@ -99,12 +99,12 @@ def train(hyp, opt, device, tb_writer=None):
     test_path = data_dict['val']
 
     # Freeze
-    freeze = []  # parameter names to freeze (full or partial)
-    for k, v in model.named_parameters():
+    freeze = []  # parameter names to freeze (full or partial) # % https://pytorch.org/docs/stable/generated/torch.nn.Module.html (comment for below part)
+    for k, v in model.named_parameters(): # % does it gives model layer names?? Returns an iterator over module parameters, yielding both the name of the parameter as well as the parameter itself. 
         v.requires_grad = True  # train all layers
         if any(x in k for x in freeze):
             print('freezing %s' % k)
-            v.requires_grad = False
+            v.requires_grad = False. # % when I am using pretrain model it is updating entire model
 
     # Optimizer
     nbs = 64  # nominal batch size
@@ -112,8 +112,8 @@ def train(hyp, opt, device, tb_writer=None):
     hyp['weight_decay'] *= total_batch_size * accumulate / nbs  # scale weight_decay
     logger.info(f"Scaled weight_decay = {hyp['weight_decay']}")
 
-    pg0, pg1, pg2 = [], [], []  # optimizer parameter groups
-    for k, v in model.named_modules():
+    pg0, pg1, pg2 = [], [], []  # optimizer parameter groups I think below loop checks weight and bias into a list but wht ??
+    for k, v in model.named_modules():# % check prev for loop and https://discuss.pytorch.org/t/how-to-access-to-a-layer-by-module-name/83797/3
         if hasattr(v, 'bias') and isinstance(v.bias, nn.Parameter):
             pg2.append(v.bias)  # biases
         if isinstance(v, nn.BatchNorm2d):
