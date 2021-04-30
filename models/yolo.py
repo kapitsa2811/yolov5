@@ -140,7 +140,7 @@ class Model(nn.Module):
                 logger.info(f'{dt[-1]:10.2f} {o:10.2f} {m.np:10.0f}  {m.type}')
             #  input x shape:                                               shape: torch.Size([1, 3, 256, 256])
             x = m(x)  # run output x shape: 2.x: <class 'torch.Tensor'>     shape: torch.Size([1, 32, 128, 128])
-            y.append(x if m.i in self.save else None)  # save output
+            y.append(x if m.i in self.save else None)  # save output # &&&& in my case y is None
 
         if profile:
             logger.info('%.1fms total' % sum(dt))
