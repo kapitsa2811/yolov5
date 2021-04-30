@@ -90,7 +90,7 @@ class Model(nn.Module):
         # Build strides, anchors
         m = self.model[-1]  # Detect() # &&&& stripped last layer, what is Detect???? its class defined above
         if isinstance(m, Detect):
-            s = 256  # 2x min stride  &&&& what is x below and size 
+            s = 256  # 2x min stride  &&&& what is x below and size  
             m.stride = torch.tensor([s / x.shape[-2] for x in self.forward(torch.zeros(1, ch, s, s))])  # forward &&&&  m.stride = tensor([ 8., 16., 32.])
             m.anchors /= m.stride.view(-1, 1, 1) 
             check_anchor_order(m)
@@ -104,7 +104,7 @@ class Model(nn.Module):
         logger.info('')
 
     def forward(self, x, augment=False, profile=False):
-        if augment:
+        if augment: # &&&  input x: torch.Size([1, 3, 256, 256])
             img_size = x.shape[-2:]  # height, width
             s = [1, 0.83, 0.67]  # scales
             f = [None, 3, None]  # flips (2-ud, 3-lr)
