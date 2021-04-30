@@ -106,13 +106,13 @@ def train(hyp, opt, device, tb_writer=None):
             print('freezing %s' % k)
             v.requires_grad = False. # % when I am using pretrain model it is updating entire model
 
-    # Optimizer
+    # Optimizer %% not clear ??
     nbs = 64  # nominal batch size
     accumulate = max(round(nbs / total_batch_size), 1)  # accumulate loss before optimizing
     hyp['weight_decay'] *= total_batch_size * accumulate / nbs  # scale weight_decay
     logger.info(f"Scaled weight_decay = {hyp['weight_decay']}")
 
-    pg0, pg1, pg2 = [], [], []  # optimizer parameter groups I think below loop checks weight and bias into a list but wht ??
+    pg0, pg1, pg2 = [], [], []  # optimizer parameter groups I think below loop checks weight and bias into a list but wht ?? I think it is for optimisers
     for k, v in model.named_modules():# % check prev for loop and https://discuss.pytorch.org/t/how-to-access-to-a-layer-by-module-name/83797/3
         if hasattr(v, 'bias') and isinstance(v.bias, nn.Parameter):
             pg2.append(v.bias)  # biases
@@ -121,7 +121,7 @@ def train(hyp, opt, device, tb_writer=None):
         elif hasattr(v, 'weight') and isinstance(v.weight, nn.Parameter):
             pg1.append(v.weight)  # apply decay
 
-    if opt.adam:
+    if opt.adam: # % deciding optimider
         optimizer = optim.Adam(pg0, lr=hyp['lr0'], betas=(hyp['momentum'], 0.999))  # adjust beta1 to momentum
     else:
         optimizer = optim.SGD(pg0, lr=hyp['lr0'], momentum=hyp['momentum'], nesterov=True)
@@ -133,7 +133,7 @@ def train(hyp, opt, device, tb_writer=None):
 
     # Scheduler https://arxiv.org/pdf/1812.01187.pdf
     # https://pytorch.org/docs/stable/_modules/torch/optim/lr_scheduler.html#OneCycleLR
-    if opt.linear_lr:
+    if opt.linear_lr: # % not clear about schedule
         lf = lambda x: (1 - x / (epochs - 1)) * (1.0 - hyp['lrf']) + hyp['lrf']  # linear
     else:
         lf = one_cycle(1, hyp['lrf'], epochs)  # cosine 1->hyp['lrf']
